@@ -4,7 +4,7 @@ import { Calendar, Clock, XCircle, CalendarClock, AlertTriangle, CheckCircle } f
 import { useAvailability } from '@/hooks/useAvailability';
 import { useBookings } from '@/hooks/useBookings';
 import { useSettings } from '@/hooks/useSettings';
-import { generateTimeSlots, formatTime, formatDisplayDate, minutesToTime, timeToMinutes } from '@/lib/utils';
+import { generateTimeSlots, formatTime, formatDisplayDate, minutesToTime, timeToMinutes, getMeetingInstantUTC } from '@/lib/utils';
 import { triggerBookingEmails } from '@/lib/bookingEmails';
 import CalendarGrid from '@/components/calendar/CalendarGrid';
 import TimeSlotPicker from '@/components/calendar/TimeSlotPicker';
@@ -57,10 +57,10 @@ export default function ManageBookingPage() {
 
   const isWithinLeadTime = useCallback(() => {
     if (!booking) return false;
-    const meetingStart = new Date(`${booking.date}T${booking.start_time}`);
+    const meetingStart = getMeetingInstantUTC(booking.date, booking.start_time, settings?.timezone || 'America/New_York');
     const cutoff = new Date(Date.now() + leadHours * 60 * 60 * 1000);
     return meetingStart <= cutoff;
-  }, [booking, leadHours]);
+  }, [booking, leadHours, settings?.timezone]);
 
   const loadSlots = useCallback(async (dateStr: string) => {
     if (!booking) return;
@@ -72,7 +72,8 @@ export default function ManageBookingPage() {
       date, rules, overrides, othersOnDay,
       booking.duration_minutes, leadHours,
       settings?.buffer_minutes ?? 0,
-      settings?.slot_increment_minutes ?? 15
+      settings?.slot_increment_minutes ?? 15,
+      settings?.timezone || 'America/New_York'
     );
     setSlots(available);
     setSlotsLoading(false);

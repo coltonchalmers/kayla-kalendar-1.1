@@ -125,7 +125,7 @@ export default function RecurringBookingPage() {
     setSlotsLoading(true);
     const existing = await fetchBookingsForDate(dateStr);
     const date = new Date(dateStr + 'T00:00:00');
-    let available = generateTimeSlots(date, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement);
+    let available = generateTimeSlots(date, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement, adminTimezone);
 
     // Filter by allowed time range if set
     if (allowedTimeStart && allowedTimeEnd) {
@@ -216,7 +216,7 @@ export default function RecurringBookingPage() {
       // Check availability
       if (!isConflict) {
         const existing = await fetchBookingsForDate(date);
-        const available = generateTimeSlots(dateObj, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement);
+        const available = generateTimeSlots(dateObj, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement, adminTimezone);
 
         // Filter by allowed time range
         let filtered = available;
@@ -274,7 +274,7 @@ export default function RecurringBookingPage() {
     setRescheduleSlotsLoading(prev => ({ ...prev, [conflictIndex]: true }));
     const existing = await fetchBookingsForDate(dateStr);
     const dateObj = new Date(dateStr + 'T00:00:00');
-    let available = generateTimeSlots(dateObj, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement);
+    let available = generateTimeSlots(dateObj, rules, overrides, existing, durationMinutes, leadHours, bufferMinutes, slotIncrement, adminTimezone);
 
     if (allowedTimeStart && allowedTimeEnd) {
       const aStart = timeToMinutes(allowedTimeStart);

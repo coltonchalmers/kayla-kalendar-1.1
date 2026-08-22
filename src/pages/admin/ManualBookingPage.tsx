@@ -53,7 +53,7 @@ export default function ManualBookingPage() {
     setSlotsLoading(true);
     const existing = await fetchBookingsForDate(dateStr);
     const date = new Date(dateStr + 'T00:00:00');
-    const available = generateTimeSlots(date, rules, overrides, existing, duration, 0, selectedMeetingType?.buffer_minutes ?? settings?.buffer_minutes ?? 0, settings?.slot_increment_minutes ?? 15);
+    const available = generateTimeSlots(date, rules, overrides, existing, duration, 0, selectedMeetingType?.buffer_minutes ?? settings?.buffer_minutes ?? 0, settings?.slot_increment_minutes ?? 15, settings?.timezone || 'America/New_York');
     setSlots(available);
     setSlotsLoading(false);
   }, [rules, overrides, duration, fetchBookingsForDate]);

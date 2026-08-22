@@ -329,7 +329,7 @@ export default function BookingDetailsModal({ booking, open, onClose }: Props) {
       : (settings?.buffer_minutes ?? 0);
     const lead = settings?.booking_lead_hours || 0;
     const increment = settings?.slot_increment_minutes ?? 15;
-    const available = generateTimeSlots(dateObj, rules, overrides, existing, duration, lead, buffer, increment);
+    const available = generateTimeSlots(dateObj, rules, overrides, existing, duration, lead, buffer, increment, settings?.timezone || 'America/New_York');
     setRescheduleSlots(available);
     setRescheduleSlotsLoading(false);
   }, [booking, fetchBookingsForDate, rules, overrides, settings, meetingTypeMap]);
@@ -422,7 +422,7 @@ export default function BookingDetailsModal({ booking, open, onClose }: Props) {
       : (settings?.buffer_minutes ?? 0);
     const lead = settings?.booking_lead_hours || 0;
     const increment = settings?.slot_increment_minutes ?? 15;
-    const available = generateTimeSlots(dateObj, rules, overrides, existing, duration, lead, buffer, increment);
+    const available = generateTimeSlots(dateObj, rules, overrides, existing, duration, lead, buffer, increment, settings?.timezone || 'America/New_York');
     setSeriesSlots(prev => ({ ...prev, [index]: available }));
     setSeriesSlotsLoading(prev => ({ ...prev, [index]: false }));
   }, [booking, fetchBookingsForDate, rules, overrides, settings, meetingTypeMap]);

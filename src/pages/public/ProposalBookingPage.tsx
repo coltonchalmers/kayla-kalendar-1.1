@@ -15,7 +15,7 @@ import { useProposalLinks } from '@/hooks/useProposalLinks';
 import { useBookings } from '@/hooks/useBookings';
 import { useSettings } from '@/hooks/useSettings';
 import { useAvailability } from '@/hooks/useAvailability';
-import { generateTimeSlots, formatDate, formatDisplayDate, formatTime, detectTimezone, getTimezoneOptions, classNames, convertTimeSlot, convertTimeSlotWithDate } from '@/lib/utils';
+import { generateTimeSlots, formatDate, formatDisplayDate, formatTime, detectTimezone, getTimezoneOptions, classNames, convertTimeSlot, convertTimeSlotWithDate, getMeetingInstantUTC } from '@/lib/utils';
 import { triggerBookingEmails } from '@/lib/bookingEmails';
 import type { Booking, MeetingType, ProposalSlot, BookingStep } from '@/lib/types';
 import type { ProposalLinkWithSlots } from '@/hooks/useProposalLinks';
@@ -121,7 +121,7 @@ export default function ProposalBookingPage() {
     setCalendarSlotsLoading(true);
     const existing = await fetchBookingsForDate(dateStr);
     const date = new Date(dateStr + 'T00:00:00');
-    const available = generateTimeSlots(date, rules, overrides, existing, durationMinutes, settings?.booking_lead_hours || 2, meetingType?.buffer_minutes ?? settings?.buffer_minutes ?? 0, settings?.slot_increment_minutes ?? 15);
+    const available = generateTimeSlots(date, rules, overrides, existing, durationMinutes, settings?.booking_lead_hours || 2, meetingType?.buffer_minutes ?? settings?.buffer_minutes ?? 0, settings?.slot_increment_minutes ?? 15, adminTimezone);
     setCalendarSlots(available);
     setCalendarSlotsLoading(false);
   }, [rules, overrides, settings, fetchBookingsForDate, durationMinutes, meetingType]);
@@ -151,7 +151,7 @@ export default function ProposalBookingPage() {
       if (selectedSlot) {
         const leadHours = settings?.booking_lead_hours || 2;
         const cutoff = new Date(Date.now() + leadHours * 60 * 60 * 1000);
-        const slotStart = new Date(`${selectedSlot.date}T${selectedSlot.start_time}`);
+        const slotStart = getMeetingInstantUTC(selectedSlot.date, selectedSlot.start_time, adminTimezone);
         if (slotStart <= cutoff) {
           alert('This slot is too close to the start time to book. Please choose another slot.');
           setStep('slots');
