@@ -65,6 +65,7 @@ export default function MeetingTypeBookingPage() {
   }, [token, fetchByToken]);
 
   const durationMinutes = meetingType?.duration_minutes || 30;
+  const adminTimezone = settings?.timezone || 'America/New_York';
 
   const loadSlots = useCallback(async (dateStr: string) => {
     setSlotsLoading(true);
@@ -74,8 +75,6 @@ export default function MeetingTypeBookingPage() {
     setSlots(available);
     setSlotsLoading(false);
   }, [rules, overrides, settings, fetchBookingsForDate, durationMinutes, adminTimezone]);
-
-  const adminTimezone = settings?.timezone || 'America/New_York';
 
   const displaySlots = useMemo(() =>
     slots.map(s => convertTimeSlot(s, selectedDate || '', adminTimezone, clientTimezone)),
